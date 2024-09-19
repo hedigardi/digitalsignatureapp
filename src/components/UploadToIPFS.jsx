@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { pinata } from '../utilities/config'; // Adjust the path to your config
+import { pinata } from '../utilities/config';
+import { embedQRCodeIntoPDF } from '../utilities/pdfModifier';
 
-const UploadToIPFS = ({ file, setIpfsHash }) => {
+const UploadToIPFS = ({ fileBuffer, setIpfsHash, transactionHash }) => {
   const [isUploading, setIsUploading] = useState(false);
 
   const uploadFileToPinata = async () => {
     setIsUploading(true);
     try {
-      const upload = await pinata.upload.file(file);
+      const modifiedFile = new File([fileBuffer], `signed_document_${transactionHash}.pdf`, { type: 'application/pdf' });
+      const upload = await pinata.upload.file(modifiedFile);
       console.log('File uploaded to IPFS with hash:', upload.IpfsHash);
       setIpfsHash(upload.IpfsHash);
     } catch (error) {
@@ -20,7 +22,7 @@ const UploadToIPFS = ({ file, setIpfsHash }) => {
   return (
     <div>
       <button onClick={uploadFileToPinata} disabled={isUploading}>
-        {isUploading ? 'Uploading...' : 'Upload to IPFS'}
+        {isUploading ? 'Uploading...' : 'Upload Document'}
       </button>
     </div>
   );

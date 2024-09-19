@@ -1,68 +1,11 @@
 import React, { useState } from 'react';
 import Web3 from 'web3';
-import QRCode from 'qrcode';
-import { contractAddress } from '../utilities/contractConfig'; // Import contract address
-import { keccak256 } from 'js-sha3'; // Import SHA3 hash function for hashing
-import { PDFDocument } from 'pdf-lib';
-import axios from 'axios';
+import { keccak256 } from 'js-sha3';
+import { contractAddress, contractABI } from '../utilities/contractConfig';
 
-// Generate QR Code URL
-const generateQRCodeUrl = async (transactionUrl) => {
-  try {
-    const qrCodeUrl = await QRCode.toDataURL(transactionUrl);
-    return qrCodeUrl;
-  } catch (error) {
-    console.error('Error generating QR code:', error);
-    throw error;
-  }
-};
-
-// Embed QR Code into PDF
-const addQRCodeToPDF = async (pdfBytes, qrCodeDataUrl) => {
-  const pdfDoc = await PDFDocument.load(pdfBytes);
-  const pages = pdfDoc.getPages();
-  const firstPage = pages[0];
-
-  const qrImage = await pdfDoc.embedPng(qrCodeDataUrl); // Embed the QR code image into the PDF
-  const { width, height } = firstPage.getSize();
-
-  // Add the QR code image to the bottom-right of the first page
-  firstPage.drawImage(qrImage, {
-    x: width - 160,
-    y: 20,
-    width: 140,
-    height: 140,
-  });
-
-  // Save the modified PDF and return the bytes
-  const modifiedPdfBytes = await pdfDoc.save();
-  return modifiedPdfBytes;
-};
-
-// Upload the PDF to IPFS
-const uploadToIPFS = async (pdfBytes) => {
-  const formData = new FormData();
-  formData.append('file', new Blob([pdfBytes], { type: 'application/pdf' }));
-
-  try {
-    const response = await axios.post('https://api.pinata.cloud/pinning/pinFileToIPFS', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        pinata_api_key: 'YOUR_PINATA_API_KEY', // Replace with your Pinata API key
-        pinata_secret_api_key: 'YOUR_PINATA_SECRET_API_KEY' // Replace with your Pinata secret API key
-      }
-    });
-    return response.data.IpfsHash;
-  } catch (error) {
-    console.error('Error uploading to IPFS:', error);
-    throw error;
-  }
-};
-
-const SignDocument = ({ fileHash, setTransactionHash }) => {
+const SignDocument = ({ fileBuffer, setTransactionHash }) => {
   const [isSigning, setIsSigning] = useState(false);
-  const [transactionHash, setTxHash] = useState(null);  // Track transaction hash
-  const [qrCodeUrl, setQrCodeUrl] = useState(null);  // Track QR code data URL
+  const [txHash, setTxHash] = useState(null);
 
   const signDocument = async () => {
     setIsSigning(true);
@@ -70,50 +13,36 @@ const SignDocument = ({ fileHash, setTransactionHash }) => {
       if (!window.ethereum) {
         throw new Error('MetaMask is not installed');
       }
-
+  
+      console.log(fileBuffer); // Check if it's an ArrayBuffer or Uint8Array
+  
       const web3 = new Web3(window.ethereum);
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
-
-      if (!contractAddress) {
-        throw new Error('Contract address is not defined');
-      }
-
-      const contract = new web3.eth.Contract([{
-        "inputs": [{ "internalType": "bytes32", "name": "_documentHash", "type": "bytes32" }],
-        "name": "signDocument",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      }], contractAddress);
-
-      const hashedFileHash = keccak256(fileHash);
-      const paddedData = '0x' + hashedFileHash.slice(0, 64);
-
-      const tx = await contract.methods.signDocument(paddedData).send({ from: account });
-      const txHash = tx.transactionHash;
-      setTransactionHash(txHash);
-      setTxHash(txHash);
-
-      const transactionUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
-      const qrCodeUrl = await generateQRCodeUrl(transactionUrl);
-      setQrCodeUrl(qrCodeUrl);
-
-      // Download the PDF file from IPFS
-      const pdfResponse = await fetch(`https://gateway.pinata.cloud/ipfs/${fileHash}`);
-      const pdfBytes = await pdfResponse.arrayBuffer();
-      const modifiedPdfBytes = await addQRCodeToPDF(pdfBytes, qrCodeUrl);
-      const ipfsHash = await uploadToIPFS(modifiedPdfBytes);
-
-      const newLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
-      console.log('Updated document with QR code uploaded to IPFS:', newLink);
-
+  
+      const contract = new web3.eth.Contract(contractABI, contractAddress);
+  
+      // Convert fileBuffer (ArrayBuffer) to Uint8Array if necessary
+      const uint8Array = new Uint8Array(fileBuffer);
+  
+      // Hash the file buffer to generate a unique document identifier
+      const documentHash = keccak256(uint8Array);
+  
+      // Convert the document hash to bytes32 format
+      const documentHashBytes32 = web3.utils.hexToBytes('0x' + documentHash);
+  
+      // Sign the document by sending the hash to the contract
+      const tx = await contract.methods.signDocument(documentHashBytes32).send({ from: account });
+      const transactionHash = tx.transactionHash;
+  
+      setTransactionHash(transactionHash);
+      setTxHash(transactionHash);
     } catch (error) {
       console.error('Error signing document:', error.message);
     } finally {
       setIsSigning(false);
     }
-  };
+  };   
 
   return (
     <div>
@@ -121,25 +50,17 @@ const SignDocument = ({ fileHash, setTransactionHash }) => {
         {isSigning ? 'Signing...' : 'Sign Document'}
       </button>
 
-      {transactionHash && (
+      {txHash && (
         <div>
           <p>Document has been signed!</p>
-          <p>Transaction hash: {transactionHash}</p>
-
+          <p>Transaction hash: {txHash}</p>
           <a
-            href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
+            href={`https://sepolia.etherscan.io/tx/${txHash}`}
             target="_blank"
             rel="noopener noreferrer"
           >
             View on Etherscan
           </a>
-
-          {qrCodeUrl && (
-            <div>
-              <h4>QR Code for Etherscan Transaction</h4>
-              <img src={qrCodeUrl} alt="QR Code" />
-            </div>
-          )}
         </div>
       )}
     </div>

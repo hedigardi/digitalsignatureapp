@@ -10,9 +10,11 @@ const FileUpload = ({ setUploadedFile, transactionHash }) => {
   // Handle file upload
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
-    setUploadedFile(file); // Pass the file to the parent component
-  };
+    const fileArrayBuffer = await file.arrayBuffer(); // Konvertera filen till ArrayBuffer
+  
+    setSelectedFile(file); // Behåll den ursprungliga filen om den behövs senare
+    setUploadedFile(fileArrayBuffer); // Skicka ArrayBuffer istället för hela filen
+  };  
 
   // Generate QR code using the qrcode-generator library
   const generateQRCode = (transactionUrl) => {
