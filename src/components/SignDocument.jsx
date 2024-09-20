@@ -7,14 +7,13 @@ const SignDocument = ({ fileBuffer, setTransactionHash }) => {
   const [isSigning, setIsSigning] = useState(false);
   const [txHash, setTxHash] = useState(null);
 
+  // Function to sign the document
   const signDocument = async () => {
     setIsSigning(true);
     try {
       if (!window.ethereum) {
         throw new Error('MetaMask is not installed');
       }
-  
-      console.log(fileBuffer); // Check if it's an ArrayBuffer or Uint8Array
   
       const web3 = new Web3(window.ethereum);
       const accounts = await web3.eth.getAccounts();

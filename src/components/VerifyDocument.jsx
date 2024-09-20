@@ -8,11 +8,13 @@ const VerifyDocument = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(null);
 
+  // Handle file upload
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
   };
 
+  // Function to verify the document
   const verifyDocument = async () => {
     if (!selectedFile) return;
   
@@ -20,23 +22,23 @@ const VerifyDocument = () => {
     try {
       const web3 = new Web3(window.ethereum);
   
-      // Läs in filinnehållet som en buffer
+      // Read the file content as a buffer
       const fileBuffer = await selectedFile.arrayBuffer();
       
-      // Generera dokumenthash
+      // Generate document hash
       const documentHash = keccak256(fileBuffer);
       
-      // Logga hashvärden för felsökning
+      // Log hash values for debugging
       console.log('Document Hash:', documentHash);
   
-      // Konvertera hash till bytes32 utan prefix
+      // Convert hash to bytes32 without prefix
       const documentHashBytes32 = '0x' + documentHash.padStart(64, '0');
       console.log('Document Hash Bytes32:', documentHashBytes32);
   
-      // Skapa en instans av smarta kontraktet
+      // Create a contract instance
       const contract = new web3.eth.Contract(contractABI, contractAddress);
   
-      // Anropa verifyDocument-funktionen från smarta kontraktet
+      // Call the verifyDocument function from the smart contract
       const verified = await contract.methods.verifyDocument(documentHashBytes32).call();
       setIsVerified(verified);
     } catch (error) {
