@@ -1,8 +1,10 @@
-# React + Vite
+# Digital Signature Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Digital Signature Platform is a web application that enables secure signing of documents using blockchain technology. Users can upload their PDF documents, sign them with their Web3 wallet (e.g., MetaMask), and receive a verifiable transaction link. The application utilizes Pinata to store documents on IPFS and generates a URL that can be used to verify the signature via Etherscan.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-Upload and sign PDF documents.
+-Authenticate using a Web3 wallet.
+-Store documents on IPFS via Pinata.
+-Generate a verification link for easy signature verification.
