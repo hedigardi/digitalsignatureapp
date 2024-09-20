@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { ethers } from 'ethers';
 
 const ConnectWallet = ({ setAccount }) => {
-
   // Check if MetaMask is installed
   useEffect(() => {
     if (!window.ethereum) {
@@ -10,11 +9,11 @@ const ConnectWallet = ({ setAccount }) => {
     }
   }, []);
 
+  // Function to connect to the user's wallet
   const connectWallet = async () => {
-    console.log('Connect wallet button clicked');
     if (typeof window.ethereum !== 'undefined') {
       try {
-        const provider = new ethers.BrowserProvider(window.ethereum); // Updated from Web3Provider
+        const provider = new ethers.BrowserProvider(window.ethereum); // Initialize provider
         const accounts = await provider.send('eth_requestAccounts', []); // Request account access
         setAccount(accounts[0]); // Set the connected account
         console.log('Connected account:', accounts[0]);
