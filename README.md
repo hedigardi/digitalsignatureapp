@@ -4,7 +4,7 @@ The Digital Signature Platform is a web application that enables secure signing 
 
 ## Features
 
--Upload and sign PDF documents.
--Authenticate using a Web3 wallet.
--Store documents on IPFS via Pinata.
--Generate a verification link for easy signature verification.
+- Upload and sign PDF documents.
+- Authenticate using a Web3 wallet.
+- Store documents on IPFS via Pinata.
+- Generate a verification link for easy signature verification.
