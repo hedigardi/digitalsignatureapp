@@ -15,7 +15,7 @@ const App = () => {
   return (
     <div>
       <h1>Digital Signature Platform</h1>
-      <ConnectWallet setAccount={setAccount} />
+      <ConnectWallet setAccount={setAccount} account={account} />
 
       {account && (
         <>
