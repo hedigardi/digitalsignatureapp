@@ -6,10 +6,12 @@ import { contractAddress, contractABI } from '../utilities/contractConfig';
 const SignDocument = ({ fileBuffer, setTransactionHash }) => {
   const [isSigning, setIsSigning] = useState(false);
   const [txHash, setTxHash] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(''); // State for error messages
 
   // Function to sign the document
   const signDocument = async () => {
     setIsSigning(true);
+    setErrorMessage(''); // Reset error message on new signing attempt
     try {
       if (!window.ethereum) {
         throw new Error('MetaMask is not installed');
@@ -37,21 +39,28 @@ const SignDocument = ({ fileBuffer, setTransactionHash }) => {
       setTransactionHash(transactionHash);
       setTxHash(transactionHash);
     } catch (error) {
-      console.error('Error signing document:', error.message);
+      console.error('Error signing document:', error); // Log the full error object
+      // Check for specific error message for rejected transaction
+      if (error.message.includes('User denied transaction signature')) {
+        setErrorMessage('The transaction rejected by user.'); // Set user-friendly error message
+      } else {
+        setErrorMessage('Error signing document: ' + error.message); // Handle other errors
+      }
     } finally {
       setIsSigning(false);
     }
-  };   
+  };
 
   return (
     <div>
+      <h3>Sign Document</h3>
       <button onClick={signDocument} disabled={isSigning}>
         {isSigning ? 'Signing...' : 'Sign Document'}
       </button>
 
       {txHash && (
         <div>
-          <p>Document has been signed!</p>
+          <p>The Document has been signed!</p>
           <p>Transaction hash: {txHash}</p>
           <a
             href={`https://sepolia.etherscan.io/tx/${txHash}`}
@@ -60,6 +69,12 @@ const SignDocument = ({ fileBuffer, setTransactionHash }) => {
           >
             View on Etherscan
           </a>
+        </div>
+      )}
+      
+      {errorMessage && (
+        <div style={{ color: 'red' }}>
+          <p>{errorMessage}</p> {/* Display the error message */}
         </div>
       )}
     </div>

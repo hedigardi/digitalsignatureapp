@@ -52,7 +52,7 @@ const FileUpload = ({ setUploadedFile, transactionHash, setIpfsHash, setIsUpload
 
       {selectedFile && (
         <button onClick={handleAddFile} disabled={isProcessing || isUploading}>
-          {isProcessing || isUploading ? 'Processing...' : 'Upload Document'}
+          {isProcessing || isUploading ? 'Uploading...' : 'Upload Document'}
         </button>
       )}
     </div>
