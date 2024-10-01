@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { ethers } from 'ethers';
 
-const ConnectWallet = ({ setAccount }) => {
+const ConnectWallet = ({ setAccount, account }) => {
   // Check if MetaMask is installed
   useEffect(() => {
     if (!window.ethereum) {
@@ -26,9 +26,13 @@ const ConnectWallet = ({ setAccount }) => {
   };
 
   return (
-    <button onClick={connectWallet}>
-      Connect Wallet
-    </button>
+    <>
+      {!account ? (
+        <button onClick={connectWallet}>Connect Wallet</button>
+      ) : (
+        <p>Connected wallet: {account}</p>
+      )}
+    </>
   );
 };
 
