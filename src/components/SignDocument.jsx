@@ -53,7 +53,7 @@ const SignDocument = ({ fileBuffer, setTransactionHash }) => {
 
   return (
     <div>
-      <h3>Sign Document</h3>
+      <h3>Sign the uploaded Document</h3>
       <button onClick={signDocument} disabled={isSigning}>
         {isSigning ? 'Signing...' : 'Sign Document'}
       </button>
