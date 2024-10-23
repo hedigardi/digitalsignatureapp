@@ -78,7 +78,7 @@ const ConnectWallet = ({ setAccount, account }) => {
             To use the application, you need to be logged in with a Web3 wallet, such as MetaMask.
             <br />
             If you don’t have a wallet yet, you can easily create one by visiting{' '}
-            <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">
+            <a href="https://metamask.io/download/" target="_blank" rel="noopener noreferrer">
               https://metamask.io/
             </a>
           </p>
