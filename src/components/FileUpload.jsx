@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { pinata } from '../utilities/pinataConfig';
+import '../App.css';
 
 const FileUpload = ({ setUploadedFile, transactionHash, setIpfsHash, setIsUploaded }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -46,7 +47,7 @@ const FileUpload = ({ setUploadedFile, transactionHash, setIpfsHash, setIsUpload
   };
 
   return (
-    <div>
+    <div className='upload-container'>
       <h3>Upload Document</h3>
       <input type="file" onChange={handleFileUpload} accept="application/pdf" />
 

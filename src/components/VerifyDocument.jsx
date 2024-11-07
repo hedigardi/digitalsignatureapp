@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Web3 from 'web3';
 import { keccak256 } from 'js-sha3';
 import { contractAddress, contractABI } from '../utilities/contractConfig';
+import '../App.css';
 
 const VerifyDocument = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -49,7 +50,7 @@ const VerifyDocument = () => {
   };   
 
   return (
-    <div>
+    <div className='verify-container'>
       <h3>Verify Document</h3>
       <input type="file" onChange={handleFileUpload} accept="application/pdf" />
 
@@ -62,9 +63,9 @@ const VerifyDocument = () => {
       {isVerified !== null && (
         <div>
           {isVerified ? (
-            <p>The document is signed and verified!</p>
+            <p className='verified-text'>The document is signed and verified!</p>
           ) : (
-            <p>The document could not be verified.</p>
+            <p className='not-verified-text'>The document could not be verified.</p>
           )}
         </div>
       )}
