@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Web3 from 'web3';
 import { keccak256 } from 'js-sha3';
 import { contractAddress, contractABI } from '../utilities/contractConfig';
+import '../App.css';
 
 const SignDocument = ({ fileBuffer, setTransactionHash }) => {
   const [isSigning, setIsSigning] = useState(false);
@@ -52,7 +53,7 @@ const SignDocument = ({ fileBuffer, setTransactionHash }) => {
   };
 
   return (
-    <div>
+    <div className='sign-container'>
       <h3>Sign the uploaded Document</h3>
       <button onClick={signDocument} disabled={isSigning}>
         {isSigning ? 'Signing...' : 'Sign Document'}

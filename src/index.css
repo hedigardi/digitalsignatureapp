@@ -67,3 +67,35 @@ input {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
+.upload-container {
+  border-radius: 8px;
+  border: 1px solid #d1d1d1;
+  background-color: #f1f1f1;
+  padding: 20px;
+  margin: 10px;
+}
+
+.sign-container {
+  border-radius: 8px;
+  border: 1px solid #d1d1d1;
+  background-color: #f1f1f1;
+  padding: 20px;
+  margin: 10px;
+}
+
+.verify-container {
+  border-radius: 8px;
+  border: 1px solid #d1d1d1;
+  background-color: #f1f1f1;
+  padding: 20px;
+  margin: 10px;
+}
+
+.verified-text {
+  color: #4a8bcb;
+}
+
+.not-verified-text {
+  color: #cb4a4a;
+}
