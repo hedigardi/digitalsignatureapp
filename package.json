@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@verified/libvf": "^1.33.0",
     "axios": "^1.7.7",
     "buffer": "^6.0.3",
     "ethers": "^6.13.2",
